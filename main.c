@@ -284,13 +284,12 @@ int decode(const char* wav_fn, const char* output_fn) {
 
   // gets 1 byte at a time from wav file looking for the start sequence, then
   // the data size header, followed by all of the data
-  w = fgetc(wav_file);
   while (w != EOF) {
     if (current_sequence != StartSequence) {
       // the start sequence has not been found yet, keep looking for it
       fseek(wav_file, 1, SEEK_CUR); // skip a byte
       w = fgetc(wav_file); // read the current byte (moves pointer forward)
-      current_sequence = (uint64_t)((current_sequence << 1) | (w & 0x01));
+      current_sequence = (current_sequence << 1) | (w & 0x01);
     } else if (data_size == 0) {
       // the start sequence has just been found, now we need to grab data size
       for (i = 0; i < 64; i++) {
