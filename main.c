@@ -208,6 +208,8 @@ int encode(const char* ogwav_fn, const char* data_fn, const char* output_fn) {
   fseek(output_file, WavFileHeaderBytes + random_offset, SEEK_SET);
 
   // write starting sequence to lsb of wav file in 64 bits
+  // loop through backward so bit order is preserved (highest order bit is
+  // written first, left to right)
   for (i = 63; i >= 0; i--) {
     fseek(output_file, 1, SEEK_CUR); // skip a byte
     w = fgetc(output_file); // read the current byte (moves pointer forward)
@@ -217,6 +219,8 @@ int encode(const char* ogwav_fn, const char* data_fn, const char* output_fn) {
   }
 
   // write data file size to next 64 bits
+  // loop through backward so bit order is preserved (highest order bit is
+  // written first, left to right)
   data_size_header = (int64_t)data_size;
   for (i = 63; i >= 0; i--) {
     fseek(output_file, 1, SEEK_CUR); // skip a byte
@@ -230,9 +234,9 @@ int encode(const char* ogwav_fn, const char* data_fn, const char* output_fn) {
   d = fgetc(data_file);
   while (d != EOF && w != EOF) {
     // d is 1 byte, so we have to loop through it 8 times to get each bit. each
-    // bit is written to every-other byte's least significant bit. loop through
-    // backward so bit order is preserved (highest order bit is written first,
-    // left to right)
+    // bit is written to every-other byte's least significant bit.
+    // loop through backward so bit order is preserved (highest order bit is
+    // written first, left to right)
     for (i = 7; i >= 0; i--) {
       fseek(output_file, 1, SEEK_CUR); // skip a byte
       w = fgetc(output_file); // read the current byte (moves pointer forward)
@@ -263,14 +267,56 @@ int encode(const char* ogwav_fn, const char* data_fn, const char* output_fn) {
 int decode(const char* wav_fn, const char* output_fn) {
   FILE *wav_file = fopen(wav_fn, "r");        // only read
   FILE *output_file = fopen(output_fn, "w+"); // only write
+  int w, o, i;
+  int64_t bytes_written = 0, data_size = 0;
+  uint64_t current_sequence = 0;
   
   // make sure all files could be opened
   if (wav_file == NULL || output_file == NULL) {
     printf("ERROR: can't open file\n");
+    fclose(wav_file);
+    fclose(output_file);
     return -1;
   }
 
-  // TODO: do the decoding here
+  // skip all of the headers
+  fseek(wav_file, WavFileHeaderBytes, SEEK_SET);
+
+  // gets 1 byte at a time from wav file looking for the start sequence, then
+  // the data size header, followed by all of the data
+  w = fgetc(wav_file);
+  while (w != EOF) {
+    if (current_sequence != StartSequence) {
+      // the start sequence has not been found yet, keep looking for it
+      fseek(wav_file, 1, SEEK_CUR); // skip a byte
+      w = fgetc(wav_file); // read the current byte (moves pointer forward)
+      current_sequence = (uint64_t)((current_sequence << 1) | (w & 0x01));
+    } else if (data_size == 0) {
+      // the start sequence has just been found, now we need to grab data size
+      for (i = 0; i < 64; i++) {
+        fseek(wav_file, 1, SEEK_CUR); // skip a byte
+        w = fgetc(wav_file); // read the current byte (moves pointer forward)
+        data_size = (data_size << 1) | (w & 0x01);
+      }
+    } else {
+      // the start sequence and data size have been found and we're looking for
+      // data bits now
+      o = 0x00;
+      for (i = 0; i < 8; i++) {
+        fseek(wav_file, 1, SEEK_CUR); // skip a byte
+        w = fgetc(wav_file); // read the current byte (moves pointer forward)
+        o = (o << 1) | (w & 0x01);
+      }
+      fputc(o, output_file);
+      bytes_written++; 
+
+      if (bytes_written == data_size) {
+        // the start sequence was found, the data size was found, and that many
+        // bytes were written to the output file. we're done.
+        break;
+      }
+    }
+  }
 
   // close file handlers
   fclose(wav_file);
@@ -281,6 +327,7 @@ int decode(const char* wav_fn, const char* output_fn) {
 
 
 // TODO: parse input flags less stupidly - do it more smartly.
+// TODO: do better file reading error checking
 int main(int argc, char* argv[]) {
   if (argc < 2) {
     printf("ERROR: not enough arguments provided. see usage\n");
