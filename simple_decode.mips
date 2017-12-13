@@ -1,0 +1,153 @@
+	.file	1 "simple_decode.c"
+	.section .mdebug.abi32
+	.previous
+	.nan	legacy
+	.module	fp=32
+	.module	nooddspreg
+	.abicalls
+	.option	pic0
+	.rdata
+	.align	2
+$LC0:
+	.ascii	"r\000"
+	.align	2
+$LC1:
+	.ascii	"wav\000"
+	.align	2
+$LC2:
+	.ascii	"w+\000"
+	.align	2
+$LC3:
+	.ascii	"out\000"
+	.text
+	.align	2
+	.globl	main
+	.set	nomips16
+	.set	nomicromips
+	.ent	main
+	.type	main, @function
+main:
+	.frame	$fp,64,$31		# vars= 32, regs= 2/0, args= 16, gp= 8
+	.mask	0xc0000000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-64
+	sw	$31,60($sp)
+	sw	$fp,56($sp)
+	move	$fp,$sp
+	lui	$2,%hi($LC0)
+	addiu	$5,$2,%lo($LC0)
+	lui	$2,%hi($LC1)
+	addiu	$4,$2,%lo($LC1)
+	jal	fopen
+	nop
+
+	sw	$2,40($fp)
+	lui	$2,%hi($LC2)
+	addiu	$5,$2,%lo($LC2)
+	lui	$2,%hi($LC3)
+	addiu	$4,$2,%lo($LC3)
+	jal	fopen
+	nop
+
+	sw	$2,44($fp)
+	sw	$0,36($fp)
+	li	$2,100			# 0x64
+	sw	$2,48($fp)
+	li	$2,60			# 0x3c
+	sw	$2,52($fp)
+	move	$6,$0
+	lw	$5,52($fp)
+	lw	$4,40($fp)
+	jal	fseek
+	nop
+
+	b	$L2
+	nop
+
+$L6:
+	sw	$0,28($fp)
+	sw	$0,32($fp)
+	b	$L3
+	nop
+
+$L4:
+	li	$6,1			# 0x1
+	li	$5,1			# 0x1
+	lw	$4,40($fp)
+	jal	fseek
+	nop
+
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	sw	$2,24($fp)
+	lw	$2,28($fp)
+	nop
+	sll	$3,$2,1
+	lw	$2,24($fp)
+	nop
+	andi	$2,$2,0x1
+	or	$2,$3,$2
+	sw	$2,28($fp)
+	lw	$2,32($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,32($fp)
+$L3:
+	lw	$2,32($fp)
+	nop
+	slt	$2,$2,8
+	bne	$2,$0,$L4
+	nop
+
+	lw	$5,44($fp)
+	lw	$4,28($fp)
+	jal	fputc
+	nop
+
+	lw	$2,36($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,36($fp)
+	lw	$3,36($fp)
+	lw	$2,48($fp)
+	nop
+	beq	$3,$2,$L8
+	nop
+
+$L2:
+	lw	$3,24($fp)
+	li	$2,-1			# 0xffffffffffffffff
+	bne	$3,$2,$L6
+	nop
+
+	b	$L5
+	nop
+
+$L8:
+	nop
+$L5:
+	lw	$4,40($fp)
+	jal	fclose
+	nop
+
+	lw	$4,44($fp)
+	jal	fclose
+	nop
+
+	move	$2,$0
+	move	$sp,$fp
+	lw	$31,60($sp)
+	lw	$fp,56($sp)
+	addiu	$sp,$sp,64
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	main
+	.size	main, .-main
+	.ident	"GCC: (crosstool-NG ) 6.3.0"

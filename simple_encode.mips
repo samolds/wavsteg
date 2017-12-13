@@ -1,0 +1,157 @@
+	.file	1 "simple_encode.c"
+	.section .mdebug.abi32
+	.previous
+	.nan	legacy
+	.module	fp=32
+	.module	nooddspreg
+	.abicalls
+	.option	pic0
+	.rdata
+	.align	2
+$LC0:
+	.ascii	"r\000"
+	.align	2
+$LC1:
+	.ascii	"data\000"
+	.align	2
+$LC2:
+	.ascii	"w+\000"
+	.align	2
+$LC3:
+	.ascii	"wav\000"
+	.text
+	.align	2
+	.globl	main
+	.set	nomips16
+	.set	nomicromips
+	.ent	main
+	.type	main, @function
+main:
+	.frame	$fp,56,$31		# vars= 24, regs= 2/0, args= 16, gp= 8
+	.mask	0xc0000000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-56
+	sw	$31,52($sp)
+	sw	$fp,48($sp)
+	move	$fp,$sp
+	lui	$2,%hi($LC0)
+	addiu	$5,$2,%lo($LC0)
+	lui	$2,%hi($LC1)
+	addiu	$4,$2,%lo($LC1)
+	jal	fopen
+	nop
+
+	sw	$2,36($fp)
+	lui	$2,%hi($LC2)
+	addiu	$5,$2,%lo($LC2)
+	lui	$2,%hi($LC3)
+	addiu	$4,$2,%lo($LC3)
+	jal	fopen
+	nop
+
+	sw	$2,40($fp)
+	li	$2,60			# 0x3c
+	sw	$2,44($fp)
+	move	$6,$0
+	lw	$5,44($fp)
+	lw	$4,40($fp)
+	jal	fseek
+	nop
+
+	lw	$4,36($fp)
+	jal	fgetc
+	nop
+
+	sw	$2,28($fp)
+	b	$L2
+	nop
+
+$L6:
+	li	$2,7			# 0x7
+	sw	$2,32($fp)
+	b	$L3
+	nop
+
+$L4:
+	li	$6,1			# 0x1
+	li	$5,1			# 0x1
+	lw	$4,40($fp)
+	jal	fseek
+	nop
+
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	sw	$2,24($fp)
+	li	$6,1			# 0x1
+	li	$5,-1			# 0xffffffffffffffff
+	lw	$4,40($fp)
+	jal	fseek
+	nop
+
+	lw	$2,24($fp)
+	nop
+	andi	$3,$2,0xfe
+	lw	$4,28($fp)
+	lw	$2,32($fp)
+	nop
+	sra	$2,$4,$2
+	andi	$2,$2,0x1
+	or	$2,$3,$2
+	sw	$2,24($fp)
+	lw	$5,40($fp)
+	lw	$4,24($fp)
+	jal	fputc
+	nop
+
+	lw	$2,32($fp)
+	nop
+	addiu	$2,$2,-1
+	sw	$2,32($fp)
+$L3:
+	lw	$2,32($fp)
+	nop
+	bgez	$2,$L4
+	nop
+
+	lw	$4,36($fp)
+	jal	fgetc
+	nop
+
+	sw	$2,28($fp)
+$L2:
+	lw	$3,28($fp)
+	li	$2,-1			# 0xffffffffffffffff
+	beq	$3,$2,$L5
+	nop
+
+	lw	$3,24($fp)
+	li	$2,-1			# 0xffffffffffffffff
+	bne	$3,$2,$L6
+	nop
+
+$L5:
+	lw	$4,36($fp)
+	jal	fclose
+	nop
+
+	lw	$4,40($fp)
+	jal	fclose
+	nop
+
+	move	$2,$0
+	move	$sp,$fp
+	lw	$31,52($sp)
+	lw	$fp,48($sp)
+	addiu	$sp,$sp,56
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	main
+	.size	main, .-main
+	.ident	"GCC: (crosstool-NG ) 6.3.0"
