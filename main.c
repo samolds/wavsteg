@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 
 
@@ -18,7 +19,7 @@ const uint64_t StartSequence = 0x25badfaa3a51f7a5; // TODO: make unlikely sequen
 const uint32_t WavFileHeaderBytes = 44;
 
 // header bytes + 8 start sequence bytes + 8 data length bytes
-const uint32_t WavDataOverheadBytes = WavFileHeaderBytes + 16;
+const uint32_t WavDataOverheadBytes = 44 + 16;
 
 
 

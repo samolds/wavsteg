@@ -1,0 +1,1597 @@
+	.file	1 "main.c"
+	.section .mdebug.abi32
+	.previous
+	.nan	legacy
+	.module	fp=32
+	.module	nooddspreg
+	.abicalls
+	.option	pic0
+	.globl	StartSequence
+	.rdata
+	.align	3
+	.type	StartSequence, @object
+	.size	StartSequence, 8
+StartSequence:
+	.word	633003946
+	.word	978450341
+	.globl	WavFileHeaderBytes
+	.align	2
+	.type	WavFileHeaderBytes, @object
+	.size	WavFileHeaderBytes, 4
+WavFileHeaderBytes:
+	.word	44
+	.globl	WavDataOverheadBytes
+	.align	2
+	.type	WavDataOverheadBytes, @object
+	.size	WavDataOverheadBytes, 4
+WavDataOverheadBytes:
+	.word	60
+	.align	2
+$LC0:
+	.ascii	"wavsteg [encode|decode] TODO \000"
+	.text
+	.align	2
+	.globl	printUsage
+	.set	nomips16
+	.set	nomicromips
+	.ent	printUsage
+	.type	printUsage, @function
+printUsage:
+	.frame	$fp,32,$31		# vars= 0, regs= 2/0, args= 16, gp= 8
+	.mask	0xc0000000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-32
+	sw	$31,28($sp)
+	sw	$fp,24($sp)
+	move	$fp,$sp
+	lui	$2,%hi($LC0)
+	addiu	$4,$2,%lo($LC0)
+	jal	puts
+	nop
+
+	nop
+	move	$sp,$fp
+	lw	$31,28($sp)
+	lw	$fp,24($sp)
+	addiu	$sp,$sp,32
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	printUsage
+	.size	printUsage, .-printUsage
+	.rdata
+	.align	2
+$LC1:
+	.ascii	"ERROR: unexpected wav header val at idx %d: 0x%x, expect"
+	.ascii	"ed: 0x%x\012\000"
+	.text
+	.align	2
+	.globl	verifyMatch
+	.set	nomips16
+	.set	nomicromips
+	.ent	verifyMatch
+	.type	verifyMatch, @function
+verifyMatch:
+	.frame	$fp,32,$31		# vars= 0, regs= 2/0, args= 16, gp= 8
+	.mask	0xc0000000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-32
+	sw	$31,28($sp)
+	sw	$fp,24($sp)
+	move	$fp,$sp
+	sw	$4,32($fp)
+	sw	$5,36($fp)
+	sw	$6,40($fp)
+	lw	$3,32($fp)
+	lw	$2,36($fp)
+	nop
+	beq	$3,$2,$L3
+	nop
+
+	lw	$7,36($fp)
+	lw	$6,32($fp)
+	lw	$5,40($fp)
+	lui	$2,%hi($LC1)
+	addiu	$4,$2,%lo($LC1)
+	jal	printf
+	nop
+
+	li	$2,-1			# 0xffffffffffffffff
+	b	$L4
+	nop
+
+$L3:
+	move	$2,$0
+$L4:
+	move	$sp,$fp
+	lw	$31,28($sp)
+	lw	$fp,24($sp)
+	addiu	$sp,$sp,32
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	verifyMatch
+	.size	verifyMatch, .-verifyMatch
+	.align	2
+	.globl	validateWavHeader
+	.set	nomips16
+	.set	nomicromips
+	.ent	validateWavHeader
+	.type	validateWavHeader, @function
+validateWavHeader:
+	.frame	$fp,40,$31		# vars= 8, regs= 2/0, args= 16, gp= 8
+	.mask	0xc0000000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-40
+	sw	$31,36($sp)
+	sw	$fp,32($sp)
+	move	$fp,$sp
+	sw	$4,40($fp)
+	sw	$0,24($fp)
+	lw	$4,40($fp)
+	jal	ftell
+	nop
+
+	sw	$2,28($fp)
+	lw	$4,40($fp)
+	jal	rewind
+	nop
+
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	move	$6,$0
+	li	$5,82			# 0x52
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,1			# 0x1
+	li	$5,73			# 0x49
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,2			# 0x2
+	li	$5,70			# 0x46
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,3			# 0x3
+	li	$5,70			# 0x46
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	li	$6,1			# 0x1
+	li	$5,4			# 0x4
+	lw	$4,40($fp)
+	jal	fseek
+	nop
+
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,8			# 0x8
+	li	$5,87			# 0x57
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,9			# 0x9
+	li	$5,65			# 0x41
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,10			# 0xa
+	li	$5,86			# 0x56
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,11			# 0xb
+	li	$5,69			# 0x45
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,12			# 0xc
+	li	$5,102			# 0x66
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,13			# 0xd
+	li	$5,109			# 0x6d
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,14			# 0xe
+	li	$5,116			# 0x74
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,14			# 0xe
+	li	$5,32			# 0x20
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	li	$6,1			# 0x1
+	li	$5,4			# 0x4
+	lw	$4,40($fp)
+	jal	fseek
+	nop
+
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,20			# 0x14
+	li	$5,1			# 0x1
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,21			# 0x15
+	move	$5,$0
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,22			# 0x16
+	li	$5,2			# 0x2
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,23			# 0x17
+	move	$5,$0
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,24			# 0x18
+	li	$5,68			# 0x44
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,25			# 0x19
+	li	$5,172			# 0xac
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,26			# 0x1a
+	move	$5,$0
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,27			# 0x1b
+	move	$5,$0
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	li	$6,1			# 0x1
+	li	$5,6			# 0x6
+	lw	$4,40($fp)
+	jal	fseek
+	nop
+
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,34			# 0x22
+	li	$5,16			# 0x10
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,35			# 0x23
+	move	$5,$0
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,36			# 0x24
+	li	$5,100			# 0x64
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,37			# 0x25
+	li	$5,97			# 0x61
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,38			# 0x26
+	li	$5,116			# 0x74
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	li	$6,39			# 0x27
+	li	$5,97			# 0x61
+	move	$4,$2
+	jal	verifyMatch
+	nop
+
+	move	$3,$2
+	lw	$2,24($fp)
+	nop
+	addu	$2,$2,$3
+	sw	$2,24($fp)
+	li	$6,1			# 0x1
+	li	$5,4			# 0x4
+	lw	$4,40($fp)
+	jal	fseek
+	nop
+
+	move	$6,$0
+	lw	$5,28($fp)
+	lw	$4,40($fp)
+	jal	fseek
+	nop
+
+	lw	$2,24($fp)
+	move	$sp,$fp
+	lw	$31,36($sp)
+	lw	$fp,32($sp)
+	addiu	$sp,$sp,40
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	validateWavHeader
+	.size	validateWavHeader, .-validateWavHeader
+	.rdata
+	.align	2
+$LC2:
+	.ascii	"r\000"
+	.align	2
+$LC3:
+	.ascii	"w+\000"
+	.align	2
+$LC4:
+	.ascii	"ERROR: can't open file\000"
+	.align	2
+$LC5:
+	.ascii	"ERROR: wav file is not big enough to encode data into\000"
+	.align	2
+$LC6:
+	.ascii	"ERROR: wav file should have at least %d bytes of headers"
+	.ascii	", has %d\012\000"
+	.text
+	.align	2
+	.globl	encode
+	.set	nomips16
+	.set	nomicromips
+	.ent	encode
+	.type	encode, @function
+encode:
+	.frame	$fp,96,$31		# vars= 48, regs= 6/0, args= 16, gp= 8
+	.mask	0xc00f0000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-96
+	sw	$31,92($sp)
+	sw	$fp,88($sp)
+	sw	$19,84($sp)
+	sw	$18,80($sp)
+	sw	$17,76($sp)
+	sw	$16,72($sp)
+	move	$fp,$sp
+	sw	$4,96($fp)
+	sw	$5,100($fp)
+	sw	$6,104($fp)
+	lui	$2,%hi($LC2)
+	addiu	$5,$2,%lo($LC2)
+	lw	$4,96($fp)
+	jal	fopen
+	nop
+
+	sw	$2,40($fp)
+	lui	$2,%hi($LC2)
+	addiu	$5,$2,%lo($LC2)
+	lw	$4,100($fp)
+	jal	fopen
+	nop
+
+	sw	$2,44($fp)
+	lui	$2,%hi($LC3)
+	addiu	$5,$2,%lo($LC3)
+	lw	$4,104($fp)
+	jal	fopen
+	nop
+
+	sw	$2,48($fp)
+	move	$3,$0
+	move	$2,$0
+	sw	$3,60($fp)
+	sw	$2,56($fp)
+	lw	$2,40($fp)
+	nop
+	beq	$2,$0,$L8
+	nop
+
+	lw	$2,44($fp)
+	nop
+	beq	$2,$0,$L8
+	nop
+
+	lw	$2,48($fp)
+	nop
+	bne	$2,$0,$L9
+	nop
+
+$L8:
+	lui	$2,%hi($LC4)
+	addiu	$4,$2,%lo($LC4)
+	jal	puts
+	nop
+
+	lw	$4,40($fp)
+	jal	fclose
+	nop
+
+	lw	$4,44($fp)
+	jal	fclose
+	nop
+
+	lw	$4,48($fp)
+	jal	fclose
+	nop
+
+	li	$2,-1			# 0xffffffffffffffff
+	b	$L10
+	nop
+
+$L9:
+	li	$6,2			# 0x2
+	move	$5,$0
+	lw	$4,40($fp)
+	jal	fseek
+	nop
+
+	li	$6,2			# 0x2
+	move	$5,$0
+	lw	$4,44($fp)
+	jal	fseek
+	nop
+
+	lw	$4,40($fp)
+	jal	ftell
+	nop
+
+	sw	$2,64($fp)
+	lw	$4,44($fp)
+	jal	ftell
+	nop
+
+	sw	$2,68($fp)
+	lw	$3,64($fp)
+	li	$2,44			# 0x2c
+	subu	$2,$3,$2
+	lw	$3,68($fp)
+	nop
+	sll	$3,$3,5
+	sltu	$2,$2,$3
+	beq	$2,$0,$L11
+	nop
+
+	lui	$2,%hi($LC5)
+	addiu	$4,$2,%lo($LC5)
+	jal	puts
+	nop
+
+	lw	$4,40($fp)
+	jal	fclose
+	nop
+
+	lw	$4,44($fp)
+	jal	fclose
+	nop
+
+	lw	$4,48($fp)
+	jal	fclose
+	nop
+
+	li	$2,-1			# 0xffffffffffffffff
+	b	$L10
+	nop
+
+$L11:
+	lw	$3,64($fp)
+	li	$2,44			# 0x2c
+	sltu	$2,$3,$2
+	beq	$2,$0,$L12
+	nop
+
+	li	$2,44			# 0x2c
+	lw	$6,64($fp)
+	move	$5,$2
+	lui	$2,%hi($LC6)
+	addiu	$4,$2,%lo($LC6)
+	jal	printf
+	nop
+
+	lw	$4,40($fp)
+	jal	fclose
+	nop
+
+	lw	$4,44($fp)
+	jal	fclose
+	nop
+
+	lw	$4,48($fp)
+	jal	fclose
+	nop
+
+	li	$2,-1			# 0xffffffffffffffff
+	b	$L10
+	nop
+
+$L12:
+	lw	$4,40($fp)
+	jal	rewind
+	nop
+
+	lw	$4,44($fp)
+	jal	rewind
+	nop
+
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	sw	$2,24($fp)
+	b	$L13
+	nop
+
+$L14:
+	lw	$5,48($fp)
+	lw	$4,24($fp)
+	jal	fputc
+	nop
+
+	lw	$4,40($fp)
+	jal	fgetc
+	nop
+
+	sw	$2,24($fp)
+$L13:
+	lw	$3,24($fp)
+	li	$2,-1			# 0xffffffffffffffff
+	bne	$3,$2,$L14
+	nop
+
+	lw	$4,40($fp)
+	jal	fclose
+	nop
+
+	jal	rand
+	nop
+
+	move	$4,$2
+	lw	$3,64($fp)
+	li	$2,60			# 0x3c
+	subu	$3,$3,$2
+	lw	$2,68($fp)
+	nop
+	subu	$2,$3,$2
+	divu	$0,$4,$2
+	bne	$2,$0,1f
+	nop
+	break	7
+1:
+	mfhi	$2
+	sw	$2,32($fp)
+	lw	$2,32($fp)
+	nop
+	andi	$2,$2,0x1
+	beq	$2,$0,$L15
+	nop
+
+	lw	$2,32($fp)
+	nop
+	addiu	$2,$2,-1
+	sw	$2,32($fp)
+$L15:
+	li	$3,44			# 0x2c
+	lw	$2,32($fp)
+	nop
+	addu	$2,$3,$2
+	move	$6,$0
+	move	$5,$2
+	lw	$4,48($fp)
+	jal	fseek
+	nop
+
+	li	$2,63			# 0x3f
+	sw	$2,36($fp)
+	b	$L16
+	nop
+
+$L19:
+	li	$6,1			# 0x1
+	li	$5,1			# 0x1
+	lw	$4,48($fp)
+	jal	fseek
+	nop
+
+	lw	$4,48($fp)
+	jal	fgetc
+	nop
+
+	sw	$2,24($fp)
+	li	$6,1			# 0x1
+	li	$5,-1			# 0xffffffffffffffff
+	lw	$4,48($fp)
+	jal	fseek
+	nop
+
+	lw	$2,24($fp)
+	nop
+	andi	$4,$2,0xfe
+	li	$3,978386944			# 0x3a510000
+	ori	$3,$3,0xf7a5
+	li	$2,632946688			# 0x25ba0000
+	ori	$2,$2,0xdfaa
+	lw	$5,36($fp)
+	nop
+	andi	$5,$5,0x20
+	beq	$5,$0,$L17
+	nop
+
+	lw	$5,36($fp)
+	nop
+	srl	$19,$2,$5
+	move	$18,$0
+	b	$L18
+	nop
+
+$L17:
+	sll	$6,$2,1
+	lw	$7,36($fp)
+	li	$5,-1			# 0xffffffffffffffff
+	xor	$5,$7,$5
+	sll	$5,$6,$5
+	lw	$6,36($fp)
+	nop
+	srl	$19,$3,$6
+	or	$19,$5,$19
+	lw	$5,36($fp)
+	nop
+	srl	$18,$2,$5
+$L18:
+	move	$2,$19
+	andi	$2,$2,0x1
+	or	$2,$4,$2
+	sw	$2,24($fp)
+	lw	$5,48($fp)
+	lw	$4,24($fp)
+	jal	fputc
+	nop
+
+	lw	$2,36($fp)
+	nop
+	addiu	$2,$2,-1
+	sw	$2,36($fp)
+$L16:
+	lw	$2,36($fp)
+	nop
+	bgez	$2,$L19
+	nop
+
+	lw	$2,68($fp)
+	nop
+	sw	$2,60($fp)
+	sra	$2,$2,31
+	sw	$2,56($fp)
+	li	$2,63			# 0x3f
+	sw	$2,36($fp)
+	b	$L20
+	nop
+
+$L23:
+	li	$6,1			# 0x1
+	li	$5,1			# 0x1
+	lw	$4,48($fp)
+	jal	fseek
+	nop
+
+	lw	$4,48($fp)
+	jal	fgetc
+	nop
+
+	sw	$2,24($fp)
+	li	$6,1			# 0x1
+	li	$5,-1			# 0xffffffffffffffff
+	lw	$4,48($fp)
+	jal	fseek
+	nop
+
+	lw	$2,24($fp)
+	nop
+	andi	$3,$2,0xfe
+	lw	$2,36($fp)
+	nop
+	andi	$2,$2,0x20
+	beq	$2,$0,$L21
+	nop
+
+	lw	$4,56($fp)
+	lw	$2,36($fp)
+	nop
+	sra	$17,$4,$2
+	lw	$2,56($fp)
+	nop
+	sra	$16,$2,31
+	b	$L22
+	nop
+
+$L21:
+	lw	$2,56($fp)
+	nop
+	sll	$4,$2,1
+	lw	$5,36($fp)
+	li	$2,-1			# 0xffffffffffffffff
+	xor	$2,$5,$2
+	sll	$2,$4,$2
+	lw	$5,60($fp)
+	lw	$4,36($fp)
+	nop
+	srl	$17,$5,$4
+	or	$17,$2,$17
+	lw	$4,56($fp)
+	lw	$2,36($fp)
+	nop
+	sra	$16,$4,$2
+$L22:
+	move	$2,$17
+	andi	$2,$2,0x1
+	or	$2,$3,$2
+	sw	$2,24($fp)
+	lw	$5,48($fp)
+	lw	$4,24($fp)
+	jal	fputc
+	nop
+
+	lw	$2,36($fp)
+	nop
+	addiu	$2,$2,-1
+	sw	$2,36($fp)
+$L20:
+	lw	$2,36($fp)
+	nop
+	bgez	$2,$L23
+	nop
+
+	lw	$4,44($fp)
+	jal	fgetc
+	nop
+
+	sw	$2,28($fp)
+	b	$L24
+	nop
+
+$L28:
+	li	$2,7			# 0x7
+	sw	$2,36($fp)
+	b	$L25
+	nop
+
+$L26:
+	li	$6,1			# 0x1
+	li	$5,1			# 0x1
+	lw	$4,48($fp)
+	jal	fseek
+	nop
+
+	lw	$4,48($fp)
+	jal	fgetc
+	nop
+
+	sw	$2,24($fp)
+	li	$6,1			# 0x1
+	li	$5,-1			# 0xffffffffffffffff
+	lw	$4,48($fp)
+	jal	fseek
+	nop
+
+	lw	$2,24($fp)
+	nop
+	andi	$3,$2,0xfe
+	lw	$4,28($fp)
+	lw	$2,36($fp)
+	nop
+	sra	$2,$4,$2
+	andi	$2,$2,0x1
+	or	$2,$3,$2
+	sw	$2,24($fp)
+	lw	$5,48($fp)
+	lw	$4,24($fp)
+	jal	fputc
+	nop
+
+	lw	$2,36($fp)
+	nop
+	addiu	$2,$2,-1
+	sw	$2,36($fp)
+$L25:
+	lw	$2,36($fp)
+	nop
+	bgez	$2,$L26
+	nop
+
+	lw	$4,44($fp)
+	jal	fgetc
+	nop
+
+	sw	$2,28($fp)
+$L24:
+	lw	$3,28($fp)
+	li	$2,-1			# 0xffffffffffffffff
+	beq	$3,$2,$L27
+	nop
+
+	lw	$3,24($fp)
+	li	$2,-1			# 0xffffffffffffffff
+	bne	$3,$2,$L28
+	nop
+
+$L27:
+	lw	$4,44($fp)
+	jal	fclose
+	nop
+
+	lw	$4,48($fp)
+	jal	fclose
+	nop
+
+	move	$2,$0
+$L10:
+	move	$sp,$fp
+	lw	$31,92($sp)
+	lw	$fp,88($sp)
+	lw	$19,84($sp)
+	lw	$18,80($sp)
+	lw	$17,76($sp)
+	lw	$16,72($sp)
+	addiu	$sp,$sp,96
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	encode
+	.size	encode, .-encode
+	.align	2
+	.globl	decode
+	.set	nomips16
+	.set	nomicromips
+	.ent	decode
+	.type	decode, @function
+decode:
+	.frame	$fp,128,$31		# vars= 64, regs= 10/0, args= 16, gp= 8
+	.mask	0xc0ff0000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-128
+	sw	$31,124($sp)
+	sw	$fp,120($sp)
+	sw	$23,116($sp)
+	sw	$22,112($sp)
+	sw	$21,108($sp)
+	sw	$20,104($sp)
+	sw	$19,100($sp)
+	sw	$18,96($sp)
+	sw	$17,92($sp)
+	sw	$16,88($sp)
+	move	$fp,$sp
+	sw	$4,128($fp)
+	sw	$5,132($fp)
+	lui	$2,%hi($LC2)
+	addiu	$5,$2,%lo($LC2)
+	lw	$4,128($fp)
+	jal	fopen
+	nop
+
+	sw	$2,64($fp)
+	lui	$2,%hi($LC3)
+	addiu	$5,$2,%lo($LC3)
+	lw	$4,132($fp)
+	jal	fopen
+	nop
+
+	sw	$2,68($fp)
+	move	$3,$0
+	move	$2,$0
+	sw	$3,44($fp)
+	sw	$2,40($fp)
+	move	$3,$0
+	move	$2,$0
+	sw	$3,52($fp)
+	sw	$2,48($fp)
+	move	$3,$0
+	move	$2,$0
+	sw	$3,60($fp)
+	sw	$2,56($fp)
+	lw	$2,64($fp)
+	nop
+	beq	$2,$0,$L30
+	nop
+
+	lw	$2,68($fp)
+	nop
+	bne	$2,$0,$L31
+	nop
+
+$L30:
+	lui	$2,%hi($LC4)
+	addiu	$4,$2,%lo($LC4)
+	jal	puts
+	nop
+
+	lw	$4,64($fp)
+	jal	fclose
+	nop
+
+	lw	$4,68($fp)
+	jal	fclose
+	nop
+
+	li	$2,-1			# 0xffffffffffffffff
+	b	$L32
+	nop
+
+$L31:
+	li	$2,44			# 0x2c
+	move	$6,$0
+	move	$5,$2
+	lw	$4,64($fp)
+	jal	fseek
+	nop
+
+	b	$L33
+	nop
+
+$L42:
+	li	$3,978386944			# 0x3a510000
+	ori	$3,$3,0xf7a5
+	li	$2,632946688			# 0x25ba0000
+	ori	$2,$2,0xdfaa
+	lw	$4,56($fp)
+	move	$5,$2
+	bne	$4,$5,$L43
+	nop
+
+	lw	$4,60($fp)
+	move	$2,$3
+	beq	$4,$2,$L44
+	nop
+
+$L43:
+	li	$6,1			# 0x1
+	li	$5,1			# 0x1
+	lw	$4,64($fp)
+	jal	fseek
+	nop
+
+	lw	$4,64($fp)
+	jal	fgetc
+	nop
+
+	sw	$2,24($fp)
+	lw	$2,60($fp)
+	nop
+	srl	$2,$2,31
+	lw	$3,56($fp)
+	nop
+	sll	$16,$3,1
+	or	$16,$2,$16
+	lw	$2,60($fp)
+	nop
+	sll	$17,$2,1
+	lw	$2,24($fp)
+	nop
+	sw	$2,76($fp)
+	sw	$0,72($fp)
+	lw	$3,76($fp)
+	lw	$2,72($fp)
+	nop
+	move	$4,$2
+	andi	$20,$4,0
+	move	$2,$3
+	andi	$21,$2,0x1
+	or	$2,$16,$20
+	sw	$2,56($fp)
+	or	$2,$17,$21
+	sw	$2,60($fp)
+	b	$L33
+	nop
+
+$L44:
+	lw	$2,48($fp)
+	lw	$3,52($fp)
+	nop
+	or	$2,$2,$3
+	bne	$2,$0,$L36
+	nop
+
+	sw	$0,32($fp)
+	b	$L37
+	nop
+
+$L38:
+	li	$6,1			# 0x1
+	li	$5,1			# 0x1
+	lw	$4,64($fp)
+	jal	fseek
+	nop
+
+	lw	$4,64($fp)
+	jal	fgetc
+	nop
+
+	sw	$2,24($fp)
+	lw	$2,52($fp)
+	nop
+	srl	$2,$2,31
+	lw	$3,48($fp)
+	nop
+	sll	$18,$3,1
+	or	$18,$2,$18
+	lw	$2,52($fp)
+	nop
+	sll	$19,$2,1
+	lw	$2,24($fp)
+	nop
+	sw	$2,84($fp)
+	sw	$0,80($fp)
+	lw	$3,84($fp)
+	lw	$2,80($fp)
+	nop
+	move	$4,$2
+	andi	$22,$4,0
+	move	$2,$3
+	andi	$23,$2,0x1
+	or	$2,$18,$22
+	sw	$2,48($fp)
+	or	$2,$19,$23
+	sw	$2,52($fp)
+	lw	$2,32($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,32($fp)
+$L37:
+	lw	$2,32($fp)
+	nop
+	slt	$2,$2,64
+	bne	$2,$0,$L38
+	nop
+
+	b	$L33
+	nop
+
+$L36:
+	sw	$0,28($fp)
+	sw	$0,32($fp)
+	b	$L39
+	nop
+
+$L40:
+	li	$6,1			# 0x1
+	li	$5,1			# 0x1
+	lw	$4,64($fp)
+	jal	fseek
+	nop
+
+	lw	$4,64($fp)
+	jal	fgetc
+	nop
+
+	sw	$2,24($fp)
+	lw	$2,28($fp)
+	nop
+	sll	$3,$2,1
+	lw	$2,24($fp)
+	nop
+	andi	$2,$2,0x1
+	or	$2,$3,$2
+	sw	$2,28($fp)
+	lw	$2,32($fp)
+	nop
+	addiu	$2,$2,1
+	sw	$2,32($fp)
+$L39:
+	lw	$2,32($fp)
+	nop
+	slt	$2,$2,8
+	bne	$2,$0,$L40
+	nop
+
+	lw	$5,68($fp)
+	lw	$4,28($fp)
+	jal	fputc
+	nop
+
+	lw	$5,44($fp)
+	lw	$4,40($fp)
+	li	$7,1			# 0x1
+	move	$6,$0
+	addu	$3,$5,$7
+	sltu	$8,$3,$5
+	addu	$2,$4,$6
+	addu	$4,$8,$2
+	move	$2,$4
+	sw	$3,44($fp)
+	sw	$2,40($fp)
+	lw	$3,40($fp)
+	lw	$2,48($fp)
+	nop
+	bne	$3,$2,$L33
+	nop
+
+	lw	$3,44($fp)
+	lw	$2,52($fp)
+	nop
+	beq	$3,$2,$L45
+	nop
+
+$L33:
+	lw	$3,24($fp)
+	li	$2,-1			# 0xffffffffffffffff
+	bne	$3,$2,$L42
+	nop
+
+	b	$L41
+	nop
+
+$L45:
+	nop
+$L41:
+	lw	$4,64($fp)
+	jal	fclose
+	nop
+
+	lw	$4,68($fp)
+	jal	fclose
+	nop
+
+	move	$2,$0
+$L32:
+	move	$sp,$fp
+	lw	$31,124($sp)
+	lw	$fp,120($sp)
+	lw	$23,116($sp)
+	lw	$22,112($sp)
+	lw	$21,108($sp)
+	lw	$20,104($sp)
+	lw	$19,100($sp)
+	lw	$18,96($sp)
+	lw	$17,92($sp)
+	lw	$16,88($sp)
+	addiu	$sp,$sp,128
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	decode
+	.size	decode, .-decode
+	.rdata
+	.align	2
+$LC7:
+	.ascii	"ERROR: not enough arguments provided. see usage\000"
+	.align	2
+$LC8:
+	.ascii	"encode\000"
+	.align	2
+$LC9:
+	.ascii	"decode\000"
+	.text
+	.align	2
+	.globl	main
+	.set	nomips16
+	.set	nomicromips
+	.ent	main
+	.type	main, @function
+main:
+	.frame	$fp,32,$31		# vars= 0, regs= 2/0, args= 16, gp= 8
+	.mask	0xc0000000,-4
+	.fmask	0x00000000,0
+	.set	noreorder
+	.set	nomacro
+	addiu	$sp,$sp,-32
+	sw	$31,28($sp)
+	sw	$fp,24($sp)
+	move	$fp,$sp
+	sw	$4,32($fp)
+	sw	$5,36($fp)
+	lw	$2,32($fp)
+	nop
+	slt	$2,$2,2
+	beq	$2,$0,$L47
+	nop
+
+	lui	$2,%hi($LC7)
+	addiu	$4,$2,%lo($LC7)
+	jal	puts
+	nop
+
+	jal	printUsage
+	nop
+
+	li	$2,-1			# 0xffffffffffffffff
+	b	$L48
+	nop
+
+$L47:
+	move	$4,$0
+	jal	time
+	nop
+
+	move	$4,$2
+	jal	srand
+	nop
+
+	lw	$2,36($fp)
+	nop
+	addiu	$2,$2,4
+	lw	$3,0($2)
+	lui	$2,%hi($LC8)
+	addiu	$5,$2,%lo($LC8)
+	move	$4,$3
+	jal	strcmp
+	nop
+
+	bne	$2,$0,$L49
+	nop
+
+	lw	$2,32($fp)
+	nop
+	slt	$2,$2,8
+	beq	$2,$0,$L50
+	nop
+
+	lui	$2,%hi($LC7)
+	addiu	$4,$2,%lo($LC7)
+	jal	puts
+	nop
+
+	jal	printUsage
+	nop
+
+	li	$2,-1			# 0xffffffffffffffff
+	b	$L48
+	nop
+
+$L50:
+	lw	$2,36($fp)
+	nop
+	addiu	$2,$2,12
+	lw	$3,0($2)
+	lw	$2,36($fp)
+	nop
+	addiu	$2,$2,20
+	lw	$4,0($2)
+	lw	$2,36($fp)
+	nop
+	addiu	$2,$2,28
+	lw	$2,0($2)
+	nop
+	move	$6,$2
+	move	$5,$4
+	move	$4,$3
+	jal	encode
+	nop
+
+	b	$L48
+	nop
+
+$L49:
+	lw	$2,36($fp)
+	nop
+	addiu	$2,$2,4
+	lw	$3,0($2)
+	lui	$2,%hi($LC9)
+	addiu	$5,$2,%lo($LC9)
+	move	$4,$3
+	jal	strcmp
+	nop
+
+	bne	$2,$0,$L51
+	nop
+
+	lw	$2,32($fp)
+	nop
+	slt	$2,$2,6
+	beq	$2,$0,$L52
+	nop
+
+	lui	$2,%hi($LC7)
+	addiu	$4,$2,%lo($LC7)
+	jal	puts
+	nop
+
+	jal	printUsage
+	nop
+
+	li	$2,-1			# 0xffffffffffffffff
+	b	$L48
+	nop
+
+$L52:
+	lw	$2,36($fp)
+	nop
+	addiu	$2,$2,12
+	lw	$3,0($2)
+	lw	$2,36($fp)
+	nop
+	addiu	$2,$2,20
+	lw	$2,0($2)
+	nop
+	move	$5,$2
+	move	$4,$3
+	jal	decode
+	nop
+
+	b	$L48
+	nop
+
+$L51:
+	jal	printUsage
+	nop
+
+	li	$2,-1			# 0xffffffffffffffff
+$L48:
+	move	$sp,$fp
+	lw	$31,28($sp)
+	lw	$fp,24($sp)
+	addiu	$sp,$sp,32
+	jr	$31
+	nop
+
+	.set	macro
+	.set	reorder
+	.end	main
+	.size	main, .-main
+	.ident	"GCC: (crosstool-NG ) 6.3.0"
