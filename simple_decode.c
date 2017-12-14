@@ -7,13 +7,11 @@ int main() {
   FILE *wav_file = fopen("wav", "r");     // only read
   FILE *output_file = fopen("out", "w+"); // only write
   int w, o, i, bytes_written = 0;
-  int data_size_bytes = 100; // number of bytes from encoded data file
 
-  // 44 header bytes (WAVE spec) + 8 start sequence bytes + 8 data length bytes
-  int wav_file_header_bytes = 44 + 16;
-  
   // skip all of the headers
-  fseek(wav_file, wav_file_header_bytes, SEEK_SET);
+  //
+  // 44 header bytes (WAVE spec) + 8 start sequence bytes + 8 data length bytes
+  fseek(wav_file, 44 + 16, SEEK_SET);
 
   // gets 1 byte at a time from wav file looking for the start sequence, then
   // the data size header, followed by all of the data
@@ -29,7 +27,7 @@ int main() {
     fputc(o, output_file);
     bytes_written++; 
 
-    if (bytes_written == data_size_bytes) {
+    if (bytes_written == 100) { // number of bytes from encoded data file
       // the start sequence was found, the data size was found, and that many
       // bytes were written to the output file. we're done.
       break;
