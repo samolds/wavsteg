@@ -14,6 +14,9 @@
 # lw
 # sw
 
+
+
+
 Main:
     addi $sp, $sp, -1136
     sw $fp, 1132($sp)
@@ -22,37 +25,46 @@ Main:
     sw $2, 12($fp)
     sw $0, 16($fp)
     lw $2, 12($fp)
+    addi $0, $0, 0    # no-op
     addi $3, $2, 1
     sw $3, 12($fp)
     addi $3, $fp, 8
     add $2, $3, $2
     lw $2, 20($2)
+    addi $0, $0, 0    # no-op
     sw $2, 8($fp)
     j Whilecheck
+    addi $0, $0, 0    # no-op
 
 Whilebody:
     addi $2, $0, 7
     sw $2, 20($fp)
     j Forcheck
+    addi $0, $0, 0    # no-op
 
 Forbody:
     lw $2, 16($fp)
+    addi $0, $0, 0    # no-op
     addi $2, $2, 1
     addi $3, $fp, 8
     add $2, $3, $2
     lw $2, 120($2)
+    addi $0, $0, 0    # no-op
     sw $2, 24($fp)
     lw $2, 24($fp)
+    addi $0, $0, 0    # no-op
     addi $7, $0, 0xfe
     and $3, $2, $7
     lw $4, 8($fp)
     lw $2, 20($fp)
+    addi $0, $0, 0    # no-op
     sra $2, $4, $2     # TODO
     addi $7, $0, 0x1
     and $2, $2, $7
     or $2, $3, $2
     sw $2, 24($fp)
     lw $2, 24($fp)
+    addi $0, $0, 0    # no-op
     sll $3, $2, 24     # TODO
     sra $3, $3, 24     # TODO
     lw $2, 16($fp)
@@ -60,37 +72,46 @@ Forbody:
     add $2, $4, $2
     sw $3, 120($2)
     lw $2, 16($fp)
+    addi $0, $0, 0    # no-op
     addi $2, $2, 1
     sw $2, 16($fp)
     lw $2, 20($fp)
+    addi $0, $0, 0    # no-op
     addi $2, $2, -1
     sw $2, 20($fp)
 
 Forcheck:
     lw $2, 20($fp)
+    addi $0, $0, 0    # no-op
     slt $7, $0, $2
     beq $7, $0, Forcheckcont1
     j Forbody
 
 Forcheckcont1:
+    addi $0, $0, 0    # no-op
     lw $2, 12($fp)
+    addi $0, $0, 0    # no-op
     addi $3, $2, 1
     sw $3, 12($fp)
     addi $3, $fp, 8
     add $2, $3, $2
     lw $2, 20($2)
+    addi $0, $0, 0    # no-op
     sw $2, 8($fp)
 
 Whilecheck:
     lw $3, 12($fp)
     addi $2, $0, 100
     beq $3, $2, End
+    addi $0, $0, 0    # no-op
+
     lw $3, 16($fp)
     addi $2, $0, 1000
     beq $3, $2, End 
     j Whilebody
 
 End:
+    addi $0, $0, 0    # no-op
     addi $2, $0, 0
     addi $sp, $fp, 0
     lw $fp, 1132($sp)
