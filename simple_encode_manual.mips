@@ -14,12 +14,64 @@
 # lw
 # sw
 
+# this is the first thing run on our processor. sp is already 0
+# -------------------------------------------------------
+#  Modified 32 bit wide structure:
+#
+#          11 states
+#          32 bits
+#          4 16-bit registers
+#          1 16-bit program counter
+#
+#
+#            Instruction    |         Function                        | Encoding  |  op     |  funct
+#          ------------------------------------------------------------------------------------------
+#          add $1, $2, $3   | addition:          $1 <- $2 + $3        |    R      | 000000  |  100000
+#          sub $1, $2, $3   | subtraction:       $1 <- $2 – $3        |    R      | 000000  |  100010
+#          and $1, $2, $3   | bitwise and:       $1 <- $2 and $3      |    R      | 000000  |  100100
+#          or $1, $2, $3    | bitwise or:        $1 <- $2 or $3       |    R      | 000000  |  100101
+#          slt $1, $2, $3   | set less than:     $1 <- 1 if $2 < $3   |    R      | 000000  |  101010
+#                           |                    $1 <- 0 otherwise
+#          sra $1, $2, $3   | shift right arith  $1 <- $2 >>> $3      |    R      | 000000  |  000011
+#          sll $1, $2, $3   | shift left logic   $1 <- $2 << $3       |    R      | 000000  |  000000
+#          addi $1, $2, imm | add immediate:     $1 <- $2 + imm       |    I      | 001000  |  n/a
+#          beq $1, $2, imm  | branch if equal:   PC <- PC + imm × 4   |    I      | 000100  |  n/a
+#          j destination    | jump:              PC <- destinationa   |    J      | 000010  |  n/a
+#          lw $1, imm($2)   | load word:         $1 <- mem[$2 + imm]  |    I      | 100000  |  n/a
+#          sw $1, imm($2)   | store word:        mem[$2 + imm] <- $1  |    I      | 101000  |  n/a
+#
+#
+#          R   (add $rd, $ra, $rb)    6  5  5  5 5     6
+#                                     0 ra rb rd 0 funct
+#
+#          I   (beq $ra, $rb, imm)     6  5  5  16
+#                                     op ra rb imm
+#
+#          J   (j dest)                6   26
+#                                     op dest
+#
+
+
+# examples:
+#   * addi: 001000 aaaaa bbbbb iiiiiiii iiiiiiii
+#   * beq:  000100 aaaaa bbbbb iiiiiiii iiiiiiii
+#   * sw:   101000 aaaaa bbbbb iiiiiiii iiiiiiii
+#   * lw:   101000 aaaaa bbbbb iiiiiiii iiiiiiii
+#
+#   * j:    000010 dd dddddddd dddddddd dddddddd
+#
+#   * add:  000000 aaaaa bbbbb ddddd 00000 100000
+
+
+
+
+
+
+
 
 
 
 Main:
-    addi $sp, $sp, -1136
-    sw $fp, 1132($sp)
     addi $fp, $sp, 0
     addi $2, $0, 60
     sw $2, 12($fp)
@@ -107,12 +159,10 @@ Whilecheck:
 
     lw $3, 16($fp)
     addi $2, $0, 1000
-    beq $3, $2, End 
+    beq $3, $2, End
     j Whilebody
 
 End:
     addi $0, $0, 0    # no-op
     addi $2, $0, 0
     addi $sp, $fp, 0
-    lw $fp, 1132($sp)
-    addi $sp, $sp, 1136
